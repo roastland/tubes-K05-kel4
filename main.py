@@ -1,8 +1,3 @@
-#Prosedur Register - F01
-
-#SPESIFIKASI
-#Prosedur ini digunakan oleh Admin untuk menambahkan user baru
-
 #Function
 def convert_line_to_data(line):
 #mengkonversi line/baris menjadi array of data, biar lebih readable aja.
@@ -21,6 +16,13 @@ def split(txt,case=';'):
     s.append (txt[j:])
     return [ item for item in s if item ]
 
+
+#Prosedur Register - F01
+
+#SPESIFIKASI
+#Prosedur ini digunakan oleh Admin untuk menambahkan user baru
+
+#Function
 def isvalid(x,y):
     for line in y:
         if line[1] == x:
@@ -42,7 +44,6 @@ def createUsername():
     return [username,nama.capitalize(),alamat,password,role]
 
 #Prosedur Utama
-
 def register():
 #Buatlah sebuah list baru kosong (nantinya akan berisikan list data user)
     data_user = []
@@ -85,33 +86,11 @@ def register():
         print("")
         print("User",new_data_user[1],"telah berhasil register ke dalam Kantong Ajaib.")
 
-# register()
-
-
 
 #Prosedur Login - F02
 
 #SPESIFIKASI
 #Prosedur ini digunakan oleh siapa saja untuk login
-
-#Function
-def split(txt,case=';'):
-    s=[]
-    j=0
-    for i in range (len(txt)):
-        if case== txt [i]:
-            s.append(txt[j:i])
-            j=i+1
-    s.append (txt[j:])
-    return [ item for item in s if item ]
-
-
-def convert_line_to_data(line):
-#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
-    raw_array_of_data = split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
 
 #Prosedur Utama
 def login():
@@ -162,36 +141,13 @@ def login():
     else:
         print("\nUsername atau Password salah! Silahkan coba lagi")
 
-# login()
-
-
-
 
 #Prosedur Pencarian berdasarkan rarity  - F03
 
 #SPESIFIKASI
 #Prosedur ini digunakan untuk mencari gadget berdasarkan rarity-nya
 
-#Function
-def convert_line_to_data(line):
-#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
-    raw_array_of_data = split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
-
-def split(txt,case=';'):
-    s=[]
-    j=0
-    for i in range (len(txt)):
-        if case== txt [i]:
-            s.append(txt[j:i])
-            j=i+1
-    s.append (txt[j:])
-    return [ item for item in s if item ]
-
 #Prosedur Utama
-
 def carirarity():
 #Buatlah sebuah list baru kosong (nantinya akan berisikan list data gadget) 
     data_gadget = []
@@ -243,33 +199,11 @@ def carirarity():
             print("Tahun Ditemukan  :", line2[5])
             print("")
     
-# carirarity()
-
-
-
 
 #Prosedur Pencarian berdasarkan tahun  - F04
 
 #SPESIFIKASI
 #Prosedur ini digunakan untuk mencari gadget berdasarkan tahun dibuatnya
-
-#Function
-def convert_line_to_data(line):
-#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
-    raw_array_of_data = split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
-
-def split(txt,case=';'):
-    s=[]
-    j=0
-    for i in range (len(txt)):
-        if case== txt [i]:
-            s.append(txt[j:i])
-            j=i+1
-    s.append (txt[j:])
-    return [ item for item in s if item ]
 
 #Prosedur Utama
 def caritahun():
@@ -338,11 +272,6 @@ def caritahun():
             print("Rarity           :", line2[4])
             print("Tahun Ditemukan  :", line2[5])
             print("")
-    
-# caritahun()
-
-
-
 
 
 # Prosedur TambahItem - F05
