@@ -1,3 +1,7 @@
+#Kamus
+islogin = False		#Bernilai True jika sudah login (baru bisa menjalani fungsi lainnya)
+admin = False		#Bernilai True jika user yang login adalah admin
+
 #Function
 def convert_line_to_data(line):
 #mengkonversi line/baris menjadi array of data, biar lebih readable aja.
@@ -92,6 +96,7 @@ def register():
 #SPESIFIKASI
 #Prosedur ini digunakan oleh siapa saja untuk login
 
+
 #Prosedur Utama
 def login():
 #Pertama, kita buka dulu file user.csv
@@ -130,6 +135,9 @@ def login():
     found = False
     while ((i < len(data_user)) and (found == False)):
         if ((data_user[i][1] == username) and (data_user[i][4] == password)):
+            if data_user[i][5] == "admin":
+                global admin
+                admin = True
             found = True
         else : 
             i     = i+1
@@ -138,6 +146,8 @@ def login():
     if (found == True) :
         print("")
         print("Halo "+str(username)+"! Selamat datang di Kantong Ajaib.")
+        global islogin
+        islogin = True
     else:
         print("\nUsername atau Password salah! Silahkan coba lagi")
 
@@ -1604,6 +1614,53 @@ def exit():
 	#save()		#Menjalankan prosedur save
 	sys.exit()	#Exit program
 
-command = input(">>>")
-if command.capitalize() == "Exit":
-	exit()
+
+print("Silakan login terlebih dahulu.")
+while islogin == False:
+	login()
+	
+isexit = False
+while isexit == False:
+	command = input(">>>")
+	if admin == True:
+		if command.capitalize() == "Register":
+			register()
+		elif command.capitalize() == "Carirarity":
+			carirarity()
+		elif command.capitalize() == "Caritahun":
+			caritahun()
+		elif command.capitalize() == "Tambahitem":
+			tambahitem()
+		elif command.capitalize() == "Hapusitem":
+			hapusitem()
+		elif command.capitalize() == "Ubahjumlah":
+			ubahjumlah()
+		elif command.capitalize() == "Riwayatpinjam":
+			riwayatpinjam()
+		elif command.capitalize() == "Riwayatkembali":
+			riwayatkembali()
+		elif command.capitalize() == "Riwayatambil":
+			riwayatambil()
+		elif command.capitalize() == "Save":
+			save()
+		elif command.capitalize() == "Help":
+			help("Admin")
+		elif command.capitalize() == "Exit":
+			exit()
+		else:
+			print("Command tidak ditemukan!")
+	elif admin == False:
+		if command.capitalize() == "Pinjam":
+			pinjam()
+		elif command.capitalize() == "Kembalikan":
+			kembalikan()
+		elif command.capitalize() == "Minta":
+			minta()
+		elif command.capitalize() == "Save":
+			save()
+		elif command.capitalize() == "Help":
+			help("User")
+		elif command.capitalize() == "Exit":
+			exit()
+		else:
+			print("Command tidak ditemukan!")
