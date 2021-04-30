@@ -509,7 +509,199 @@ def tambahitem():
         
 # tambahitem()
 
+# Prosedur HapusItem - F06
 
+# FUNGSI/PROSEDUR ANTARA
+
+def di_split(str):
+# memotong suatu string dengan pembatas ';' menjadi suatu array
+    NewArray = []
+    i = 0
+    while (len(str) > i ): 
+        if str[i] != ';':
+            i += 1
+        else:
+            NewArray.append(str[:i])
+            str = str[i+1:]
+            i = 0
+    NewArray.append(str)
+    return NewArray
+
+def convert_line_to_data(line):
+# mengkonversi line/baris menjadi array of data, biar lebih readable
+    raw_array_of_data = di_split(line)
+    array_of_data     = [data.strip() for data in raw_array_of_data]
+    return array_of_data
+
+def ready_to_use_gadget():
+# untuk menyiapkan list yang dapat digunakan dari file gadget
+    f = open("gadget.csv","r")
+    raw_lines = f.readlines()
+    f.close()
+    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
+    # hapus baris pertama yang berisikan label 'id, 'nama', ..., 'tahun_ditemukan'
+    raw_header = lines.pop(0)
+    header = convert_line_to_data(raw_header)
+    # buat list baru kosong (akan berisi list data gadget) 
+    data_gadget = []
+    # untuk setiap baris pada lines, konversikan menjadi array of data
+    for line in lines:
+        array_of_data = convert_line_to_data(line)
+        real_values = array_of_data[:]  # mencopy dari array_of_data agar tidak langsung dimodifikasi
+        for i in range(6):
+            if(i==3 or i==5):    # mengubah type kolom ke-3 (jumlah) dan ke-5 (tahun) menjadi integer
+                real_values[i] = int(real_values[i])
+    # setelah dikonversi, tambahkan real_values ke list data_gadget
+        data_gadget.append(real_values)
+    return data_gadget
+
+def ready_to_use_consumable():
+# untuk menyiapkan list yang dapat digunakan dari file consumable
+    f = open("consumable.csv","r")
+    raw_lines = f.readlines()
+    f.close()
+    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
+    # hapus baris pertama yang berisikan label 'id, 'nama', ..., 'rarity'
+    raw_header = lines.pop(0)
+    header = convert_line_to_data(raw_header)
+    # buat list baru kosong (akan berisi list data consumable) 
+    data_consumable = []
+    # untuk setiap baris pada lines, konversikan menjadi array of data
+    for line in lines:
+        array_of_data = convert_line_to_data(line)
+        real_values = array_of_data[:]  # mencopy dari array_of_data agar tidak langsung dimodifikasi
+        for i in range(5):
+            if(i==3):    # mengubah type kolom ke-3 (jumlah) menjadi integer
+                real_values[i] = int(real_values[i])
+    # setelah dikonversi, tambahkan real_values ke list data_consumable
+        data_consumable.append(real_values)
+    return data_consumable
+
+def Is_Integer(s):  # fungsi berikut diadaptasi dari StackOverflow
+# untuk mengecek apakah input merupakan integer
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+def Is_ID_Valid(s):
+# untuk mengecek validitas ID gadget/consumables
+    if ((s[0]=='G' or s[0]=='C') and Is_Integer(s[1:])==True):
+        return True
+    else:
+        return False
+
+def cari_ID_gadget(cari_ID, data_gadget):
+    i = 0
+    found = False
+    while ((i < len(data_gadget)) and (found == False)):
+        if (data_gadget[i][0] == cari_ID):
+            found = True
+        else : 
+            i = i+1
+    return [found, i]
+
+def cari_ID_consumable(cari_ID, data_consumable):
+    i = 0
+    found = False
+    while ((i < len(data_consumable)) and (found == False)):
+        if (data_consumable[i][0] == cari_ID):
+            found = True
+        else : 
+            i = i+1
+    return [found, i]
+
+# PROSEDUR UTAMA
+
+def hapusitem():
+    # siapkan list gadget & consumable
+    data_gadget = ready_to_use_gadget()
+    data_consumable = ready_to_use_consumable()
+    
+    # input ID item yang ingin dihapus datanya
+    cari_ID = input("Masukkan ID: ")
+
+    # boolean "loop" digunakan untuk melakukan pengulangan input, 
+    # apabila ID tidak ditemukan di database atau apabila admin ingin menghapus data lainnya
+    loop = True
+
+    while (loop):
+        # validasi input ID agar lebih mudah filternya
+        if (Is_ID_Valid(cari_ID) == False):     # input ID tidak valid
+            print("\nTidak ada item dengan ID tersebut!")
+            ulangi = input("Apakah Anda ingin menghapus item lain (Y/N)? ")
+            if (ulangi == 'Y'):
+                cari_ID  = input("\nMasukkan ID: ")
+            else:
+                loop = False
+
+        else:   # input ID valid
+            if (cari_ID[0] == 'G'):     # item adalah gadget
+                # mencari apakah ID ada di database
+                found = cari_ID_gadget(cari_ID, data_gadget)[0]
+                i = cari_ID_gadget(cari_ID, data_gadget)[1]
+                if (found == False):     # ID gadget tidak ada di database
+                    print("\nTidak ada item dengan ID tersebut!")
+                    ulangi = input("Apakah Anda ingin menghapus item lain (Y/N)? ")
+                    if (ulangi == 'Y'):
+                        cari_ID  = input("\nMasukkan ID: ")
+                    else:
+                        loop = False
+                else:   # ID gadget ada di database
+                    yakin = input("Apakah Anda yakin ingin menghapus " + data_gadget[i][1] + " (Y/N)? ")
+                    if (yakin == 'Y'):
+                        # hapus data pada baris tersebut
+                        data_gadget.pop(i)
+                        print("\nItem telah berhasil dihapus dari database.")
+                        # simpan perubahan yang terjadi menggunakan prosedur save
+                        #save()
+                        ulangi = input("Apakah Anda ingin menghapus item lain (Y/N)? ")
+                        if (ulangi == 'Y'):
+                            cari_ID  = input("\nMasukkan ID: ")
+                        else:
+                            loop = False
+                    else:
+                        print("\nItem gagal dihapus dari database.")
+                        ulangi = input("Apakah Anda ingin menghapus item lain (Y/N)? ")
+                        if (ulangi == 'Y'):
+                            cari_ID  = input("\nMasukkan ID: ")
+                        else:
+                            loop = False
+
+            else:     # item adalah consumable
+                # mencari apakah ID ada di database
+                found = cari_ID_consumable(cari_ID, data_consumable)[0]
+                i = cari_ID_consumable(cari_ID, data_consumable)[1]
+                if (found == False):     # ID consumable tidak ada di database
+                    print("\nTidak ada item dengan ID tersebut!")
+                    ulangi = input("Apakah Anda ingin menghapus item lain (Y/N)? ")
+                    if (ulangi == 'Y'):
+                        cari_ID  = input("\nMasukkan ID: ")
+                    else:
+                        loop = False
+                else:   # ID consumable ada di database
+                    yakin = input("Apakah Anda yakin ingin menghapus " + data_consumable[i][1] + " (Y/N)? ")
+                    if (yakin == 'Y'):
+                        # hapus data pada baris tersebut
+                        data_consumable.pop(i)
+                        print("\nItem telah berhasil dihapus dari database.")
+                        # simpan perubahan yang terjadi menggunakan prosedur save
+                        #save()
+                        ulangi = input("Apakah Anda ingin menghapus item lain (Y/N)? ")
+                        if (ulangi == 'Y'):
+                            cari_ID  = input("\nMasukkan ID: ")
+                        else:
+                            loop = False
+                    else:
+                        print("\nItem gagal dihapus dari database.")
+                        ulangi = input("Apakah Anda ingin menghapus item lain (Y/N)? ")
+                        if (ulangi == 'Y'):
+                            cari_ID  = input("\nMasukkan ID: ")
+                        else:
+                            loop = False
+        
+# hapusitem()
 
 # Prosedur UbahJumlah - F07
 
