@@ -138,29 +138,8 @@ def register():
 
 #Prosedur Utama
 def login():
-#Pertama, kita buka dulu file user.csv
-    f = open("user.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, 'username'', .... , 'role' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header = convert_line_to_data(raw_header)
-
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data user) 
-    data_user = []
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-#Lalu ubah array data history peminjaman gadget menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:] #mencopy dr array_data agar tidak langsung dimodifikasi
-        for i in range(6):   #banyaknya kolom 
-            if(i == 0)   :   #mengubah type kolom ke 0 (id) menjadi integer
-                real_values[i] = int(real_values[i])
-#Setelah dikonversi, tambahkan real_values ke list data_user
-        data_user.append(real_values)
+    # siapkan list user
+    data_user = ready_to_use_user()
 
 #Program akan meminta pengguna memasukan username dan password
     username = input("Masukan username: ")
@@ -198,34 +177,11 @@ def login():
 
 #Prosedur Utama
 def carirarity():
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data gadget) 
-    data_gadget = []
+    # siapkan list gadget
+    data_gadget = ready_to_use_gadget()
 
-#Buatlah sebuah list baru kosong lagi (nantinya akan berisikan list data gadget dengan rarity yg dicari) 
+#Buatlah sebuah list baru (nantinya akan berisikan list data gadget dengan rarity yg dicari) 
     data_gadget_rarity = []
-
-#Pertama, kita buka dulu file gadget.csv
-    f = open("gadget.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, 'nama'', .... , 'tahun ditemukan' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header = convert_line_to_data(raw_header)
-
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = split(line)
-
-#Lalu ubah array menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]  #mencopy dr array_data agar tidak langsung dimodifikasi
-        for i in range(6):   #banyaknya kolom 
-            if(i == 3)   :   #mengubah type kolom ke 3 (jumlah) menjadi integer
-                real_values[i] = int(real_values[i])
-#Setelah dikonversi, tambahkan real_values ke list data_gadget
-        data_gadget.append(real_values)
 
 #Buat input variabel yang berisi rarity yang akan dicari (rarity pasti valid)
     rarity = input("Masukkan rarity: ").capitalize()
@@ -256,34 +212,11 @@ def carirarity():
 
 #Prosedur Utama
 def caritahun():
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data gadget) 
-    data_gadget = []
+    # siapkan list gadget
+    data_gadget = ready_to_use_gadget()
 
 #Buatlah sebuah list baru kosong lagi (nantinya akan berisikan list data gadget dengan tahun yg dicari) 
     data_gadget_tahun = []
-
-#Pertama, kita buka dulu file gadget.csv
-    f = open("gadget.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, 'nama'', .... , 'tahun ditemukan' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header = convert_line_to_data(raw_header)
-
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = split(line)
-
-#Lalu ubah array menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]  #mencopy dr array_data agar tidak langsung dimodifikasi
-        for i in range(6):   #banyaknya kolom 
-            if(i == 5)   :   #mengubah type kolom ke 5 (tahun) menjadi integer
-                real_values[i] = int(real_values[i])
-#Setelah dikonversi, tambahkan real_values ke list data_gadget
-        data_gadget.append(real_values)
 
 #Buat input tahun yang ingin dicari user (sudah pasti valid)
     year = int(input("Masukkan tahun: "))
@@ -325,28 +258,6 @@ def caritahun():
 
 # Prosedur TambahItem - F05
 
-# FUNGSI/PROSEDUR ANTARA
-
-def di_split(str):
-# memotong suatu string dengan pembatas ';' menjadi suatu array
-    NewArray = []
-    i = 0
-    while (len(str) > i ): 
-        if str[i] != ';':
-            i += 1
-        else:
-            NewArray.append(str[:i])
-            str = str[i+1:]
-            i = 0
-    NewArray.append(str)
-    return NewArray
-
-def convert_line_to_data(line):
-# mengkonversi line/baris menjadi array of data, biar lebih readable
-    raw_array_of_data = di_split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
 def Is_Integer(s):  # fungsi berikut diadaptasi dari StackOverflow
 # untuk mengecek apakah input merupakan integer
     try:
@@ -369,41 +280,32 @@ def Is_Rarity_Valid(s):
     else:
         return False
 
+def cari_ID_gadget(cari_ID, data_gadget):
+    i = 0
+    found = False
+    while ((i < len(data_gadget)) and (found == False)):
+        if (data_gadget[i][0] == cari_ID):
+            found = True
+        else : 
+            i = i+1
+    return [found, i]
+
+def cari_ID_consumable(cari_ID, data_consumable):
+    i = 0
+    found = False
+    while ((i < len(data_consumable)) and (found == False)):
+        if (data_consumable[i][0] == cari_ID):
+            found = True
+        else : 
+            i = i+1
+    return [found, i]
+
 # PROSEDUR UTAMA
 
 def tambahitem():
-    # buka file gadget.csv dan consumable.csv
-    fg = open("gadget.csv",'r')
-    fc = open("consumable.csv",'r')
-    raw_lines_gadget = fg.readlines()
-    raw_lines_consumable = fc.readlines()
-    fc.close()
-    fg.close()
-    lines_gadget = [raw_line.replace("\n", "") for raw_line in raw_lines_gadget]
-    lines_consumable = [raw_line.replace("\n", "") for raw_line in raw_lines_consumable]
-
-    # hapus baris pertama yang berisikan label 'id, 'nama', 'deskripsi', ..., 
-    # dari variabel lines_gadget dan lines_consumable
-    raw_header_gadget = lines_gadget.pop(0)
-    raw_header_consumable = lines_consumable.pop(0)
-    header_gadget = convert_line_to_data(raw_header_gadget)
-    header_consumable = convert_line_to_data(raw_header_consumable)
-
-    # buat 2 list baru kosong (nantinya akan berisikan list data gadget dan data consumable) 
-    data_gadget = []
-    data_consumable = []
-
-    # untuk setiap baris pada lines_gadget, konversikan menjadi array of data
-    for line_g in lines_gadget:
-        array_of_data_g = convert_line_to_data(line_g)
-    # setelah dikonversi, tambahkan array of data ke list data_gadget
-        data_gadget.append(array_of_data_g)
-
-    # untuk setiap baris pada lines_consumable, konversikan menjadi array of data
-    for line_c in lines_consumable:
-        array_of_data_c = convert_line_to_data(line_c)
-    # setelah dikonversi, tambahkan array of data ke list data_consumable
-        data_consumable.append(array_of_data_c)
+    # siapkan list gadget dan consumable
+    data_gadget = ready_to_use_gadget()
+    data_consumable = ready_to_use_consumable()
     
     # buat list kosong baru lainnya (akan berisikan list data gadget dan data consumable yang diinput)
     new_data_gadget = []
@@ -429,13 +331,8 @@ def tambahitem():
         else:   # input ID valid
             if (id_baru[0] == 'G'):     # item adalah gadget
                 # mencari apakah ID ada di database, jika ada, ID tidak dapat ditambahkan
-                i = 0
-                found = False
-                while ((i < len(data_gadget)) and (found == False)):
-                    if (data_gadget[i][0] == id_baru):
-                        found = True
-                    else : 
-                        i = i+1
+                found = cari_ID_gadget(cari_ID, data_gadget)[0]
+                i = cari_ID_gadget(cari_ID, data_gadget)[1]
 
                 if (found == True):     # ID gadget ada di database
                     print("\nGagal menambahkan item karena ID sudah ada.")
@@ -492,13 +389,8 @@ def tambahitem():
 
             else:   # item adalah consumable
                 # mencari apakah ID ada di database, jika ada, ID tidak dapat ditambahkan
-                i = 0
-                found = False
-                while ((i < len(data_consumable)) and (found == False)):
-                    if (data_consumable[i][0] == id_baru):
-                        found = True
-                    else : 
-                        i = i+1
+                found = cari_ID_consumable(cari_ID, data_consumable)[0]
+                i = cari_ID_consumable(cari_ID, data_consumable)[1]
 
                 if (found == True):     # ID consumable ada di database
                     print("\nGagal menambahkan item karena ID sudah ada.")
@@ -549,107 +441,6 @@ def tambahitem():
 # tambahitem()
 
 # Prosedur HapusItem - F06
-
-# FUNGSI/PROSEDUR ANTARA
-
-def di_split(str):
-# memotong suatu string dengan pembatas ';' menjadi suatu array
-    NewArray = []
-    i = 0
-    while (len(str) > i ): 
-        if str[i] != ';':
-            i += 1
-        else:
-            NewArray.append(str[:i])
-            str = str[i+1:]
-            i = 0
-    NewArray.append(str)
-    return NewArray
-
-def convert_line_to_data(line):
-# mengkonversi line/baris menjadi array of data, biar lebih readable
-    raw_array_of_data = di_split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
-def ready_to_use_gadget():
-# untuk menyiapkan list yang dapat digunakan dari file gadget
-    f = open("gadget.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
-    # hapus baris pertama yang berisikan label 'id, 'nama', ..., 'tahun_ditemukan'
-    raw_header = lines.pop(0)
-    header = convert_line_to_data(raw_header)
-    # buat list baru kosong (akan berisi list data gadget) 
-    data_gadget = []
-    # untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-        real_values = array_of_data[:]  # mencopy dari array_of_data agar tidak langsung dimodifikasi
-        for i in range(6):
-            if(i==3 or i==5):    # mengubah type kolom ke-3 (jumlah) dan ke-5 (tahun) menjadi integer
-                real_values[i] = int(real_values[i])
-    # setelah dikonversi, tambahkan real_values ke list data_gadget
-        data_gadget.append(real_values)
-    return data_gadget
-
-def ready_to_use_consumable():
-# untuk menyiapkan list yang dapat digunakan dari file consumable
-    f = open("consumable.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
-    # hapus baris pertama yang berisikan label 'id, 'nama', ..., 'rarity'
-    raw_header = lines.pop(0)
-    header = convert_line_to_data(raw_header)
-    # buat list baru kosong (akan berisi list data consumable) 
-    data_consumable = []
-    # untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-        real_values = array_of_data[:]  # mencopy dari array_of_data agar tidak langsung dimodifikasi
-        for i in range(5):
-            if(i==3):    # mengubah type kolom ke-3 (jumlah) menjadi integer
-                real_values[i] = int(real_values[i])
-    # setelah dikonversi, tambahkan real_values ke list data_consumable
-        data_consumable.append(real_values)
-    return data_consumable
-
-def Is_Integer(s):  # fungsi berikut diadaptasi dari StackOverflow
-# untuk mengecek apakah input merupakan integer
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
-
-def Is_ID_Valid(s):
-# untuk mengecek validitas ID gadget/consumables
-    if ((s[0]=='G' or s[0]=='C') and Is_Integer(s[1:])==True):
-        return True
-    else:
-        return False
-
-def cari_ID_gadget(cari_ID, data_gadget):
-    i = 0
-    found = False
-    while ((i < len(data_gadget)) and (found == False)):
-        if (data_gadget[i][0] == cari_ID):
-            found = True
-        else : 
-            i = i+1
-    return [found, i]
-
-def cari_ID_consumable(cari_ID, data_consumable):
-    i = 0
-    found = False
-    while ((i < len(data_consumable)) and (found == False)):
-        if (data_consumable[i][0] == cari_ID):
-            found = True
-        else : 
-            i = i+1
-    return [found, i]
 
 # PROSEDUR UTAMA
 
@@ -744,86 +535,12 @@ def hapusitem():
 
 # Prosedur UbahJumlah - F07
 
-# FUNGSI/PROSEDUR ANTARA
-
-def di_split(str):
-# memotong suatu string dengan pembatas ';' menjadi suatu array
-    NewArray = []
-    i = 0
-    while (len(str) > i ): 
-        if str[i] != ';':
-            i += 1
-        else:
-            NewArray.append(str[:i])
-            str = str[i+1:]
-            i = 0
-    NewArray.append(str)
-    return NewArray
-
-def convert_line_to_data(line):
-# mengkonversi line/baris menjadi array of data, biar lebih readable
-    raw_array_of_data = di_split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
-def Is_Integer(s):  # fungsi berikut diadaptasi dari StackOverflow
-# untuk mengecek apakah input merupakan integer
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
-
-def Is_ID_Valid(s):
-# untuk mengecek validitas ID gadget/consumables
-    if ((s[0]=='G' or s[0]=='C') and Is_Integer(s[1:])==True):
-        return True
-    else:
-        return False
-
 # PROSEDUR UTAMA
 
 def ubahjumlah():
-    # buka file gadget.csv dan consumable.csv
-    fg = open("gadget.csv",'r')
-    fc = open("consumable.csv",'r')
-    raw_lines_gadget = fg.readlines()
-    raw_lines_consumable = fc.readlines()
-    fc.close()
-    fg.close()
-    lines_gadget = [raw_line.replace("\n", "") for raw_line in raw_lines_gadget]
-    lines_consumable = [raw_line.replace("\n", "") for raw_line in raw_lines_consumable]
-
-    # hapus baris pertama yang berisikan label 'id, 'nama', 'deskripsi', ..., 
-    # dari variabel lines_gadget dan lines_consumable
-    raw_header_gadget = lines_gadget.pop(0)
-    raw_header_consumable = lines_consumable.pop(0)
-    header_gadget = convert_line_to_data(raw_header_gadget)
-    header_consumable = convert_line_to_data(raw_header_consumable)
-
-    # buat 2 list baru kosong (nantinya akan berisikan list data gadget dan data consumable) 
-    data_gadget = []
-    data_consumable = []
-
-    # untuk setiap baris pada lines_gadget, konversikan menjadi array of data
-    for line_g in lines_gadget:
-        array_of_data_g = convert_line_to_data(line_g)
-        real_values_g   = array_of_data_g[:]    # mencopy dari array of data agar tidak langsung dimodifikasi
-        for i in range(6):   # banyaknya kolom pada database gadget 
-            if(i == 3)   :   # mengubah type kolom indeks ke-3 (jumlah) menjadi integer
-                real_values_g[i] = int(real_values_g[i])
-        # setelah dikonversi, tambahkan real_values_g ke list data_gadget
-        data_gadget.append(real_values_g)
-
-    # untuk setiap baris pada lines_consumable, konversikan menjadi array of data
-    for line_c in lines_consumable:
-        array_of_data_c = convert_line_to_data(line_c)
-        real_values_c   = array_of_data_c[:]    # mencopy dari array of data agar tidak langsung dimodifikasi
-        for i in range(5):   # banyaknya kolom pada database consumable
-            if(i == 3)   :   # mengubah type kolom indeks ke-3 (jumlah) menjadi integer
-                real_values_c[i] = int(real_values_c[i])
-        # setelah dikonversi, tambahkan real_values_c ke list data_consumable
-        data_consumable.append(real_values_c)
+    # siapkan list gadget dan consumable
+    data_gadget = ready_to_use_gadget()
+    data_consumable = ready_to_use_consumable()
     
     # input ID item yang ingin diubah jumlahnya
     cari_ID = input("Masukkan ID: ")
@@ -845,13 +562,8 @@ def ubahjumlah():
         else:   # input ID valid
             if (cari_ID[0] == 'G'):     # item adalah gadget
                 # mencari apakah ID ada di database
-                i = 0
-                found = False
-                while ((i < len(data_gadget)) and (found == False)):
-                    if (data_gadget[i][0] == cari_ID):
-                        found = True
-                    else : 
-                        i = i+1
+                found = cari_ID_gadget(cari_ID, data_gadget)[0]
+                i = cari_ID_gadget(cari_ID, data_gadget)[1]
 
                 if (found == False):     # ID gadget tidak ada di database
                     print("\nTidak ada item dengan ID tersebut!")
@@ -912,13 +624,8 @@ def ubahjumlah():
 
             else:   # item adalah consumable
                 # mencari apakah ID ada di database
-                i = 0
-                found = False
-                while ((i < len(data_consumable)) and (found == False)):
-                    if (data_consumable[i][0] == cari_ID):
-                        found = True
-                    else : 
-                        i = i+1
+                found = cari_ID_consumable(cari_ID, data_consumable)[0]
+                i = cari_ID_consumable(cari_ID, data_consumable)[1]
 
                 if (found == False):     # ID consumable tidak ada di database
                     print("\nTidak ada item dengan ID tersebut!")
@@ -978,8 +685,6 @@ def ubahjumlah():
 # ubahjumlah()
 
 
-
-
 #Prosedur Melihat Riwayat Peminjaman Gadget - F11
 
 #SPESIFIKASI
@@ -989,48 +694,10 @@ def ubahjumlah():
 #KAMUS LOKAL
 
 #FUNCTION
-def split(txt,case=';'):
-    s=[]
-    j=0
-    for i in range (len(txt)):
-        if case== txt [i]:
-            s.append(txt[j:i])
-            j=i+1
-    s.append (txt[j:])
-    return [ item for item in s if item ]
-
-def convert_line_to_data(line):
-#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
-    raw_array_of_data = split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
 
 def carinama(id_user):
-#mengubah id_user menjadi nama  yang ada di file user.csv
-
-#Pertama, kita buka dulu file user.csv
-    f         = open("user.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines     = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, username, nama,...,role' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header     = convert_line_to_data(raw_header)
-
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data user)  
-    data_user = []
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-#Lalu ubah array data user menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]
-        for i in range(6): #banyaknya kolom
-            if(i == 0)   : #mengubah type kolom ke 0 (id) menjadi integer
-                real_values[i] = int(real_values[i]) 
-#Setelah dikonversi, tambahkan real_values ke list data_user
-        data_user.append(real_values)
+    # siapkan list user
+    data_user = ready_to_use_user()
   
 #Mencari apakah id_user ada di data, kalau ada tentukan ada di data ke berapa
     i     = 0
@@ -1048,33 +715,8 @@ def carinama(id_user):
 
 def carigadget(id_gadget):
 #mengubah id_gadget menjadi nama gadget yang ada di file gadget.csv
-
-#Pertama, kita buka dulu file gadget.csv
-    f         = open("gadget.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines     = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, nama, deskripsi,...,tahun_ditemukan' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header     = convert_line_to_data(raw_header)
-
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data gadget)  
-    data_gadget = []
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-#Lalu ubah array data user menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]
-        for i in range(6)  : #banyaknya kolom
-            if(i == 3)     : #mengubah type kolom ke 3 (jumlah) menjadi integer
-                real_values[i] = int(real_values[i])
-            elif(i == 5)   : #mengubah type kolom ke 3 (tahun_ditemukan) menjadi integer
-                real_values[i] = int(real_values[i])
-        
-#Setelah dikonversi, tambahkan real_values ke list data_gadget
-        data_gadget.append(real_values)
+    # siapkan list gadget
+    data_gadget = ready_to_use_gadget()
         
   
 #Mencari apakah id_gadget ada di data, kalau ada tentukan ada di data ke berapa
@@ -1230,24 +872,6 @@ def riwayatpinjam():
 
 #FUNCTION
 
-def split(txt,case=';'):
-    s=[]
-    j=0
-    for i in range (len(txt)):
-        if case== txt [i]:
-            s.append(txt[j:i])
-            j=i+1
-    s.append (txt[j:])
-    return [ item for item in s if item ]
-
-
-
-def convert_line_to_data(line):
-#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
-    raw_array_of_data = split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
 def cari_id_user(id_peminjaman):
 #mengubah id_peminjaman menjadi id_user yg akan digunakan untuk mencari nama user
 
@@ -1341,93 +965,6 @@ def cari_id_gadget(id_peminjaman):
  #Jika sudah ditemukan, ubah id tersebut menjadi nama gadget          
     if (found == True) :
         return(data_peminjaman[i][2])
-    else:
-        return("Gadget tidak ditemukan")
-
-
-def carinama(id_user):
-#mengubah id_user menjadi nama  yang ada di file user.csv
-
-#Pertama, kita buka dulu file user.csv
-    f         = open("user.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines     = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, username, nama,...,role' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header     = convert_line_to_data(raw_header)
-
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data user)  
-    data_user = []
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-#Lalu ubah array data user menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]
-        for i in range(6): #banyaknya kolom
-            if(i == 0)   : #mengubah type kolom ke 0 (id) menjadi integer
-                real_values[i] = int(real_values[i]) 
-#Setelah dikonversi, tambahkan real_values ke list data_user
-        data_user.append(real_values)
-  
-#Mencari apakah id_user ada di data, kalau ada tentukan ada di data ke berapa
-    i     = 0
-    found = False
-    while ((i < len(data_user)) and (found == False)):
-        if (data_user[i][0] == id_user):
-            found = True
-        else : 
-            i     = i+1
- #Jika sudah ditemukan, ubah id tersebut menjadi nama           
-    if (found == True) :
-        return(data_user[i][2])
-    else:
-        return("User tidak ditemukan")
-
-def carigadget(id_gadget):
-#mengubah id_gadget menjadi nama gadget yang ada di file gadget.csv
-
-#Pertama, kita buka dulu file gadget.csv
-    f         = open("gadget.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines     = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, nama, deskripsi,...,tahun_ditemukan' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header     = convert_line_to_data(raw_header)
-
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data gadget)  
-    data_gadget = []
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-#Lalu ubah array data user menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]
-        for i in range(6)  : #banyaknya kolom
-            if(i == 3)     : #mengubah type kolom ke 3 (jumlah) menjadi integer
-                real_values[i] = int(real_values[i])
-            elif(i == 5)   : #mengubah type kolom ke 3 (tahun_ditemukan) menjadi integer
-                real_values[i] = int(real_values[i])
-        
-#Setelah dikonversi, tambahkan real_values ke list data_gadget
-        data_gadget.append(real_values)
-        
-  
-#Mencari apakah id_gadget ada di data, kalau ada tentukan ada di data ke berapa
-    i     = 0
-    found = False
-    while ((i < len(data_gadget)) and (found == False)):
-        if (data_gadget[i][0] == id_gadget):
-            found = True
-        else : 
-            i = i+1
- #Jika sudah ditemukan, ubah id tersebut menjadi nama gadget          
-    if (found == True) :
-        return(data_gadget[i][1])
     else:
         return("Gadget tidak ditemukan")
 
@@ -1563,97 +1100,11 @@ def riwayatkembali():
 
 #FUNCTION
 
-def split(txt,case=';'):
-    s=[]
-    j=0
-    for i in range (len(txt)):
-        if case== txt [i]:
-            s.append(txt[j:i])
-            j=i+1
-    s.append (txt[j:])
-    return [ item for item in s if item ]
-
-
-
-def convert_line_to_data(line):
-#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
-    raw_array_of_data = split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
-def carinama(id_user):
-#mengubah id_user menjadi nama  yang ada di file user.csv
-
-#Pertama, kita buka dulu file user.csv
-    f         = open("user.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines     = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, username, nama,...,role' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header     = convert_line_to_data(raw_header)
-
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data user)  
-    data_user = []
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-#Lalu ubah array data user menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]
-        for i in range(6): #banyaknya kolom
-            if(i == 0)   : #mengubah type kolom ke 0 (id) menjadi integer
-                real_values[i] = int(real_values[i]) 
-#Setelah dikonversi, tambahkan real_values ke list data_user
-        data_user.append(real_values)
-  
-#Mencari apakah id_user ada di data, kalau ada tentukan ada di data ke berapa
-    i     = 0
-    found = False
-    while ((i < len(data_user)) and (found == False)):
-        if (data_user[i][0] == id_user):
-            found = True
-        else : 
-            i     = i+1
- #Jika sudah ditemukan, ubah id tersebut menjadi nama           
-    if (found == True) :
-        return(data_user[i][2])
-    else:
-        return("User tidak ditemukan")
-
 def cariconsumable(id_consumable):
 #mengubah id_consumable menjadi nama consumable yang ada di file consumable.csv
 
-#Pertama, kita buka dulu file consumable.csv
-    f         = open("consumable.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines     = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, nama, deskripsi,...,rarity' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header     = convert_line_to_data(raw_header)
-
-#---Kelompok 4 Daspro---2020/2021---K05
-
-
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data consumable)  
-    data_consumable = []
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = convert_line_to_data(line)
-#Lalu ubah array data user menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]
-        for i in range(5)  : #banyaknya kolom
-            if(i == 3)     : #mengubah type kolom ke 3 (jumlah) menjadi integer
-                real_values[i] = int(real_values[i])
-
-        
-#Setelah dikonversi, tambahkan real_values ke list data_consumable
-        data_consumable.append(real_values)
-        
+    # siapkan list consumable
+    data_consumable = ready_to_use_consumable()       
   
 #Mencari apakah id_consumable ada di data, kalau ada tentukan ada di data ke berapa
     i     = 0
@@ -1686,8 +1137,6 @@ def riwayatambil():
     raw_header = lines.pop(0)
     header     = convert_line_to_data(raw_header)
     
-
-
 #Buatlah sebuah list baru kosong (nantinya akan berisikan list data history consumable)    
     data_history_consumable = []
 #Untuk setiap baris pada lines, konversikan menjadi array of data
