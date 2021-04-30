@@ -3,13 +3,6 @@ islogin = False		#Bernilai True jika sudah login (baru bisa menjalani fungsi lai
 admin = False		#Bernilai True jika user yang login adalah admin
 
 #Function
-def convert_line_to_data(line):
-#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
-    raw_array_of_data = split(line)
-    array_of_data     = [data.strip() for data in raw_array_of_data]
-    return array_of_data
-
-
 def split(txt,case=';'):
     s=[]
     j=0
@@ -20,6 +13,77 @@ def split(txt,case=';'):
     s.append (txt[j:])
     return [ item for item in s if item ]
 
+def convert_line_to_data(line):
+#mengkonversi line/baris menjadi array of data, biar lebih readable aja.
+    raw_array_of_data = split(line)
+    array_of_data     = [data.strip() for data in raw_array_of_data]
+    return array_of_data
+
+def ready_to_use_user():
+# untuk menyiapkan list yang dapat digunakan dari file user
+    f = open("user.csv","r")
+    raw_lines = f.readlines()
+    f.close()
+    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
+    # hapus baris pertama yang berisikan label 'id, 'username', ..., 'role'
+    raw_header = lines.pop(0)
+    header = convert_line_to_data(raw_header)
+    # buat list baru kosong (akan berisi list data user) 
+    data_user = []
+    # untuk setiap baris pada lines, konversikan menjadi array of data
+    for line in lines:
+        array_of_data = convert_line_to_data(line)
+        real_values = array_of_data[:]  # mencopy dari array_of_data agar tidak langsung dimodifikasi
+        for i in range(6):
+            if(i==0):    # mengubah type kolom ke-1 (id) menjadi integer
+                real_values[i] = int(real_values[i])
+    # setelah dikonversi, tambahkan real_values ke list data_user
+        data_user.append(real_values)
+    return data_user
+
+def ready_to_use_gadget():
+# untuk menyiapkan list yang dapat digunakan dari file gadget
+    f = open("gadget.csv","r")
+    raw_lines = f.readlines()
+    f.close()
+    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
+    # hapus baris pertama yang berisikan label 'id, 'nama', ..., 'tahun_ditemukan'
+    raw_header = lines.pop(0)
+    header = convert_line_to_data(raw_header)
+    # buat list baru kosong (akan berisi list data gadget) 
+    data_gadget = []
+    # untuk setiap baris pada lines, konversikan menjadi array of data
+    for line in lines:
+        array_of_data = convert_line_to_data(line)
+        real_values = array_of_data[:]  # mencopy dari array_of_data agar tidak langsung dimodifikasi
+        for i in range(6):
+            if(i==3 or i==5):    # mengubah type kolom ke-3 (jumlah) dan ke-5 (tahun) menjadi integer
+                real_values[i] = int(real_values[i])
+    # setelah dikonversi, tambahkan real_values ke list data_gadget
+        data_gadget.append(real_values)
+    return data_gadget
+
+def ready_to_use_consumable():
+# untuk menyiapkan list yang dapat digunakan dari file consumable
+    f = open("consumable.csv","r")
+    raw_lines = f.readlines()
+    f.close()
+    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
+    # hapus baris pertama yang berisikan label 'id, 'nama', ..., 'rarity'
+    raw_header = lines.pop(0)
+    header = convert_line_to_data(raw_header)
+    # buat list baru kosong (akan berisi list data consumable) 
+    data_consumable = []
+    # untuk setiap baris pada lines, konversikan menjadi array of data
+    for line in lines:
+        array_of_data = convert_line_to_data(line)
+        real_values = array_of_data[:]  # mencopy dari array_of_data agar tidak langsung dimodifikasi
+        for i in range(5):
+            if(i==3):    # mengubah type kolom ke-3 (jumlah) menjadi integer
+                real_values[i] = int(real_values[i])
+    # setelah dikonversi, tambahkan real_values ke list data_consumable
+        data_consumable.append(real_values)
+    return data_consumable
 
 #Prosedur Register - F01
 
@@ -44,38 +108,15 @@ def createUsername():
             print("Tidak boleh ada yang kosong!\n")
         else:
             valid = True
-    role     = 'user'#Sesuai spesifikasi, pengguna yg mendaftar secar otomatis memiliki role 'user'
+    role     = 'user'   # Sesuai spesifikasi, pengguna yg mendaftar secar otomatis memiliki role 'user'
     return [username,nama.capitalize(),alamat,password,role]
 
 #Prosedur Utama
 def register():
-#Buatlah sebuah list baru kosong (nantinya akan berisikan list data user)
-    data_user = []
+    # siapkan list user
+    data_user = ready_to_use_user()
 
-#Pertama, kita buka dulu file user.csv
-    f = open("user.csv","r")
-    raw_lines = f.readlines()
-    f.close()
-    lines = [raw_line.replace("\n", "") for raw_line in raw_lines]
-
-#Hapus baris pertama yang berisikan label 'id, 'username'', .... , 'role' 
-#dari variabel lines
-    raw_header = lines.pop(0)
-    header = convert_line_to_data(raw_header)
-
-#Untuk setiap baris pada lines, konversikan menjadi array of data
-    for line in lines:
-        array_of_data = split(line)
-
-#Lalu ubah array menjadi value yang sesungguhnya, misal integer,float, atau sejenisnya
-        real_values   = array_of_data[:]  #mencopy dr array_data agar tidak langsung dimodifikasi
-        for i in range(6):   #banyaknya kolom 
-            if(i == 0)   :   #mengubah type kolom ke 0 (id) menjadi integer
-                real_values[i] = int(real_values[i])
-#Setelah dikonversi, tambahkan real_values ke list data_user
-        data_user.append(real_values)
-
-#Masukan data yang ingin di register
+    # masukkan data yang ingin di register
     id_baru  = ((data_user[(len(data_user)-1)][0]) + 1) #id_baru didapat dari id terakhir pd data sebelumnya ditambah 1
     new_data_user = [id_baru]+createUsername() # Fungsi create Username dipisah
     if isvalid(new_data_user[1],data_user) == False:
@@ -85,10 +126,8 @@ def register():
         f = open("user.csv","a")
         f.write(str(id_baru)+';'+new_data_user[1]+';'+new_data_user[2]+';'+new_data_user[3]+';'+new_data_user[4]+';'+new_data_user[5]+'\n')
         #User baru langsung disimpan ke user.csv
-
-#Output data username baru telah berhasil disimpan
-        print("")
-        print("User",new_data_user[1],"telah berhasil register ke dalam Kantong Ajaib.")
+        #Output data username baru telah berhasil disimpan
+        print("\nUser",new_data_user[1],"telah berhasil register ke dalam Kantong Ajaib.")
 
 
 #Prosedur Login - F02
